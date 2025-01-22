@@ -1,4 +1,4 @@
 # ED_G3
-INTEGRANTES: 
-\nCarrascal Castro Maria Priscila
-\nGil Sixi Alberto Luis
+INTEGRANTES:  
+Carrascal Castro Maria Priscila  
+Gil Sixi Alberto Luis
