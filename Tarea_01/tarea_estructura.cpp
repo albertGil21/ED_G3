@@ -3,10 +3,10 @@ using namespace std;
 
 struct Vector
 {
-    int *m_pVect; // Pointer to the buffer
-    int m_nCount; // Control how many elements are actually used
-    int m_nMax;   // Control how many are allocated as maximum
-    int m_nDelta; // To control the growing
+    int *m_pVect; // Puntero al buffer
+    int m_nCount; // Controla cuántos elementos están realmente usados
+    int m_nMax;   // Controla cuántos elementos están asignados como máximo
+    int m_nDelta; // Para controlar el incremento
 };
 
 void Resize(Vector *pThis);
@@ -22,12 +22,12 @@ void Insert(Vector *pThis, int elem)
 void Resize(Vector *pThis)
 {
     int *pTemp, i;
-    pTemp = new int[pThis->m_nMax + pThis->m_nDelta]; // Allocate a new vector
-    for (i = 0; i < pThis->m_nMax; i++)              // Transfer the elements
+    pTemp = new int[pThis->m_nMax + pThis->m_nDelta]; // Allocate para un nuevo vector
+    for (i = 0; i < pThis->m_nMax; i++)              // Transferir los elementos
         pTemp[i] = pThis->m_pVect[i];
-    delete[] pThis->m_pVect; // Delete the old vector
-    pThis->m_pVect = pTemp;  // Update the pointer
-    pThis->m_nMax += pThis->m_nDelta; // The Max has to be increased by delta
+    delete[] pThis->m_pVect; // Eliminar el vector antiguo
+    pThis->m_pVect = pTemp;  // Actualizar el puntero
+    pThis->m_nMax += pThis->m_nDelta; // El máximo debe incrementarse por delta
 }
 
 void Display(Vector *pThis)
@@ -46,9 +46,9 @@ int Search(Vector *pThis, int elem)
     for (int i = 0; i < pThis->m_nCount; i++)
     {
         if (pThis->m_pVect[i] == elem)
-            return i; // Element found, return its position
+            return i; // Devuelve la posición del elemento encontrado
     }
-    return -1; // Element not found
+    return -1;
 }
 
 void Delete(Vector *pThis, int elem)
@@ -62,9 +62,9 @@ void Delete(Vector *pThis, int elem)
 
     for (int i = pos; i < pThis->m_nCount - 1; i++)
     {
-        pThis->m_pVect[i] = pThis->m_pVect[i + 1]; // Shift elements to the left
+        pThis->m_pVect[i] = pThis->m_pVect[i + 1]; // Desplazar elementos a la izquierda
     }
-    pThis->m_nCount--; // Decrease the count
+    pThis->m_nCount--; // Reducir la cantidad de elementos
     cout << "Elemento " << elem << " eliminado." << endl;
 }
 
@@ -76,19 +76,19 @@ int main()
     myVect.m_nDelta = 5;
     myVect.m_pVect = nullptr;
 
-    Insert(&myVect, 10); // Insert element 10
-    Insert(&myVect, 20); // Insert element 20
-    Insert(&myVect, 30); // Insert element 30
+    Insert(&myVect, 10); // Insertar elemento 10
+    Insert(&myVect, 20); // Insertar elemento 20
+    Insert(&myVect, 30); // Insertar elemento 30
 
     cout << "Vector inicial: " << endl;
-    Display(&myVect); // Display the elements in the array
+    Display(&myVect); // Mostrar los elementos (Display)
 
-    Delete(&myVect, 20); // Delete element 20
+    Delete(&myVect, 20); // Eliminar elemento 20
 
     cout << "Vector despues de eliminar: " << endl;
-    Display(&myVect); // Display the elements in the array
+    Display(&myVect); // Mostrar los elementos (Display)
 
-    delete[] myVect.m_pVect; // Free the allocated memory
+    delete[] myVect.m_pVect; // Liberar la memoria asignada
 
     return 0;
 }
