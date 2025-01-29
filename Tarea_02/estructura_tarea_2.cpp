@@ -1,14 +1,14 @@
 #include <iostream>
 using namespace std;
 
-// Template structure for Node
+// ESTRUCTURA DEL NODO
 template <typename T>
 struct NODE {
     T m_data;
     NODE* m_pNext;
 };
 
-// Template class for Circular Linked List
+// CLASE LISTA CIRCULAR SIMPLEMENTE ENLAZADA
 template <typename T>
 class CLinkedList {
 private:
@@ -16,13 +16,13 @@ private:
 public:
     CLinkedList() : m_pRoot(nullptr) {}
     
-    // Insert node at the end
+    // INSERTAR NODO AL FINAL
     void Insert(T data) {
         NODE<T>* newNode = new NODE<T>;
         newNode->m_data = data;
         if (m_pRoot == nullptr) {
             m_pRoot = newNode;
-            m_pRoot->m_pNext = m_pRoot; // Circular link
+            m_pRoot->m_pNext = m_pRoot; // ENLACE CIRCULAR
         } else {
             NODE<T>* current = m_pRoot;
             while (current->m_pNext != m_pRoot) {
@@ -33,13 +33,13 @@ public:
         }
     }
     
-    // Insert node at the beginning
+    // INSERTAR NODO AL INICIO
     void InsertAtHead(T data) {
         NODE<T>* newNode = new NODE<T>;
         newNode->m_data = data;
         if (m_pRoot == nullptr) {
             m_pRoot = newNode;
-            m_pRoot->m_pNext = m_pRoot; // Circular link
+            m_pRoot->m_pNext = m_pRoot; // ENLACE CIRCULAR
         } else {
             NODE<T>* current = m_pRoot;
             while (current->m_pNext != m_pRoot) {
@@ -47,14 +47,14 @@ public:
             }
             newNode->m_pNext = m_pRoot;
             current->m_pNext = newNode;
-            m_pRoot = newNode; // Update root to new head
+            m_pRoot = newNode; // ACTUALIZAR RAÍZ AL NUEVO INICIO
         }
     }
     
-    // Print the list
+    // IMPRIMIR LISTA
     void Print() const {
         if (m_pRoot == nullptr) {
-            cout << "List is empty" << endl;
+            cout << "Lista vacía" << endl;
             return;
         }
         NODE<T>* current = m_pRoot;
@@ -62,17 +62,17 @@ public:
             cout << current->m_data << " -> ";
             current = current->m_pNext;
         } while (current != m_pRoot);
-        cout << "(back to root)" << endl;
+        cout << "(VUELTA A LA RAÍZ)" << endl;
     }
     
-    // Delete a node by value
+    // ELIMINAR UN NODO POR VALOR
     void Delete(T data) {
         if (m_pRoot == nullptr) return;
         
         NODE<T>* current = m_pRoot;
         NODE<T>* prev = nullptr;
         
-        // Searching for node to delete
+        // BUSCAR NODO A ELIMINAR
         do {
             if (current->m_data == data) {
                 if (prev != nullptr) {
@@ -81,7 +81,7 @@ public:
                         m_pRoot = prev->m_pNext;
                     }
                 } else {
-                    // Deleting root node
+                    // ELIMINAR NODO RAÍZ
                     if (m_pRoot->m_pNext == m_pRoot) {
                         delete m_pRoot;
                         m_pRoot = nullptr;
@@ -106,17 +106,23 @@ public:
 int main() {
     CLinkedList<int> list;
     
+    // INSERTAR ELEMENTOS AL FINAL
     list.Insert(10);
     list.Insert(20);
     list.Insert(30);
     list.Insert(40);
     list.Print();
     
-    cout << "Inserting at head: 5" << endl;
+    // INSERTAR AL INICIO
+    cout << "Insertando al inicio: 5" << endl;
     list.InsertAtHead(5);
+    list.InsertAtHead(12);
+    list.InsertAtHead(90);
+    list.InsertAtHead(60);
     list.Print();
     
-    cout << "Deleting 20 from the list." << endl;
+    // ELIMINAR ELEMENTO
+    cout << "Eliminando 20 de la lista." << endl;
     list.Delete(20);
     list.Print();
     
