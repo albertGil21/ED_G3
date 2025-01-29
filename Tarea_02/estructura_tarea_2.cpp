@@ -1,27 +1,27 @@
 #include <iostream>
 using namespace std;
 
-// Node structure using templates
+// Estructura de nodo con templates
 template <typename T>
 struct NODE
 {
-    T m_data;                 // Node data
-    NODE<T> *m_pNext;         // Pointer to the next node
+    T m_data;
+    NODE<T> *m_pNext;
+    NODE<T> *m_pPrev;
 };
 
-// Linked List class using templates
+// Lista doblemente enlazada con templates
 template <typename T>
-class CLinkedList
+class CDoublyLinkedList
 {
 private:
-    NODE<T> *m_pRoot;         // Pointer to the root node
+    NODE<T> *m_pRoot;
+    NODE<T> *m_pTail;
 
 public:
-    // Constructor
-    CLinkedList() : m_pRoot(nullptr) {}
+    CDoublyLinkedList() : m_pRoot(nullptr), m_pTail(nullptr) {}
 
-    // Destructor
-    ~CLinkedList()
+    ~CDoublyLinkedList()
     {
         while (m_pRoot != nullptr)
         {
@@ -31,73 +31,70 @@ public:
         }
     }
 
-    // Method to insert a node at the end of the list
+    // Insertar un nodo al final
     void InsertAtEnd(T data)
     {
         NODE<T> *newNode = new NODE<T>;
         newNode->m_data = data;
         newNode->m_pNext = nullptr;
+        newNode->m_pPrev = nullptr;
 
         if (m_pRoot == nullptr)
         {
             m_pRoot = newNode;
+            m_pTail = newNode;
         }
         else
         {
-            NODE<T> *current = m_pRoot;
-            while (current->m_pNext != nullptr)
-            {
-                current = current->m_pNext;
-            }
-            current->m_pNext = newNode;
+            m_pTail->m_pNext = newNode;
+            newNode->m_pPrev = m_pTail;
+            m_pTail = newNode;
         }
     }
 
-    // Method to insert a node at the beginning of the list
-    void InsertAtBeginning(T data)
-    {
-        NODE<T> *newNode = new NODE<T>;
-        newNode->m_data = data;
-        newNode->m_pNext = m_pRoot;
-        m_pRoot = newNode;
-    }
-
-    // Method to delete a node by value
+    // Eliminar un nodo por valor
     void Delete(T data)
     {
         if (m_pRoot == nullptr)
             return;
 
-        // Special case: deleting the root node
         if (m_pRoot->m_data == data)
         {
             NODE<T> *temp = m_pRoot;
             m_pRoot = m_pRoot->m_pNext;
+            if (m_pRoot != nullptr)
+                m_pRoot->m_pPrev = nullptr;
+            else
+                m_pTail = nullptr;
             delete temp;
             return;
         }
 
-        // Search for the node to delete
         NODE<T> *current = m_pRoot;
-        while (current->m_pNext != nullptr && current->m_pNext->m_data != data)
+        while (current != nullptr && current->m_data != data)
         {
             current = current->m_pNext;
         }
 
-        // If we found the node
-        if (current->m_pNext != nullptr)
+        if (current != nullptr)
         {
-            NODE<T> *temp = current->m_pNext;
-            current->m_pNext = current->m_pNext->m_pNext;
-            delete temp;
+            if (current->m_pNext != nullptr)
+                current->m_pNext->m_pPrev = current->m_pPrev;
+            else
+                m_pTail = current->m_pPrev;
+
+            if (current->m_pPrev != nullptr)
+                current->m_pPrev->m_pNext = current->m_pNext;
+
+            delete current;
         }
         else
         {
-            cout << "Value " << data << " not found in the list!" << endl;
+            cout << "Valor " << data << " no encontrado en la lista!" << endl;
         }
     }
 
-    // Method to print the list
+    // Imprimir la lista
     void Print() const
     {
         NODE<T> *current = m_pRoot;
@@ -112,21 +109,16 @@ public:
 
 int main()
 {
-    CLinkedList<int> list;
+    CDoublyLinkedList<int> list;
 
-    // Insert some elements at the end
     list.InsertAtEnd(10);
     list.InsertAtEnd(20);
     list.InsertAtEnd(30);
+    list.InsertAtEnd(5);
 
-    // Insert an element at the beginning
-    list.InsertAtBeginning(5);
-
-    // Print the list
     list.Print();
 
-    // Delete an element
-    cout << "Deleting 20 from the list." << endl;
+    cout << "Eliminando 20 de la lista." << endl;
     list.Delete(20);
     list.Print();
 
