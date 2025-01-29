@@ -1,126 +1,124 @@
 #include <iostream>
 using namespace std;
 
-// Estructura de nodo con templates
+// Template structure for Node
 template <typename T>
-struct NODE
-{
+struct NODE {
     T m_data;
-    NODE<T> *m_pNext;
-    NODE<T> *m_pPrev;
+    NODE* m_pNext;
 };
 
-// Lista doblemente enlazada con templates
+// Template class for Circular Linked List
 template <typename T>
-class CDoublyLinkedList
-{
+class CLinkedList {
 private:
-    NODE<T> *m_pRoot;
-    NODE<T> *m_pTail;
-
+    NODE<T>* m_pRoot;
 public:
-    CDoublyLinkedList() : m_pRoot(nullptr), m_pTail(nullptr) {}
-
-    ~CDoublyLinkedList()
-    {
-        while (m_pRoot != nullptr)
-        {
-            NODE<T> *temp = m_pRoot;
-            m_pRoot = m_pRoot->m_pNext;
-            delete temp;
-        }
-    }
-
-    // Insertar un nodo al final
-    void InsertAtEnd(T data)
-    {
-        NODE<T> *newNode = new NODE<T>;
+    CLinkedList() : m_pRoot(nullptr) {}
+    
+    // Insert node at the end
+    void Insert(T data) {
+        NODE<T>* newNode = new NODE<T>;
         newNode->m_data = data;
-        newNode->m_pNext = nullptr;
-        newNode->m_pPrev = nullptr;
-
-        if (m_pRoot == nullptr)
-        {
+        if (m_pRoot == nullptr) {
             m_pRoot = newNode;
-            m_pTail = newNode;
-        }
-        else
-        {
-            m_pTail->m_pNext = newNode;
-            newNode->m_pPrev = m_pTail;
-            m_pTail = newNode;
-        }
-    }
-
-    // Eliminar un nodo por valor
-    void Delete(T data)
-    {
-        if (m_pRoot == nullptr)
-            return;
-
-        if (m_pRoot->m_data == data)
-        {
-            NODE<T> *temp = m_pRoot;
-            m_pRoot = m_pRoot->m_pNext;
-            if (m_pRoot != nullptr)
-                m_pRoot->m_pPrev = nullptr;
-            else
-                m_pTail = nullptr;
-            delete temp;
-            return;
-        }
-
-        NODE<T> *current = m_pRoot;
-        while (current != nullptr && current->m_data != data)
-        {
-            current = current->m_pNext;
-        }
-
-        if (current != nullptr)
-        {
-            if (current->m_pNext != nullptr)
-                current->m_pNext->m_pPrev = current->m_pPrev;
-            else
-                m_pTail = current->m_pPrev;
-
-            if (current->m_pPrev != nullptr)
-                current->m_pPrev->m_pNext = current->m_pNext;
-
-            delete current;
-        }
-        else
-        {
-            cout << "Valor " << data << " no encontrado en la lista!" << endl;
+            m_pRoot->m_pNext = m_pRoot; // Circular link
+        } else {
+            NODE<T>* current = m_pRoot;
+            while (current->m_pNext != m_pRoot) {
+                current = current->m_pNext;
+            }
+            current->m_pNext = newNode;
+            newNode->m_pNext = m_pRoot;
         }
     }
-
-    // Imprimir la lista
-    void Print() const
-    {
-        NODE<T> *current = m_pRoot;
-        while (current != nullptr)
-        {
+    
+    // Insert node at the beginning
+    void InsertAtHead(T data) {
+        NODE<T>* newNode = new NODE<T>;
+        newNode->m_data = data;
+        if (m_pRoot == nullptr) {
+            m_pRoot = newNode;
+            m_pRoot->m_pNext = m_pRoot; // Circular link
+        } else {
+            NODE<T>* current = m_pRoot;
+            while (current->m_pNext != m_pRoot) {
+                current = current->m_pNext;
+            }
+            newNode->m_pNext = m_pRoot;
+            current->m_pNext = newNode;
+            m_pRoot = newNode; // Update root to new head
+        }
+    }
+    
+    // Print the list
+    void Print() const {
+        if (m_pRoot == nullptr) {
+            cout << "List is empty" << endl;
+            return;
+        }
+        NODE<T>* current = m_pRoot;
+        do {
             cout << current->m_data << " -> ";
             current = current->m_pNext;
-        }
-        cout << "nullptr" << endl;
+        } while (current != m_pRoot);
+        cout << "(back to root)" << endl;
+    }
+    
+    // Delete a node by value
+    void Delete(T data) {
+        if (m_pRoot == nullptr) return;
+        
+        NODE<T>* current = m_pRoot;
+        NODE<T>* prev = nullptr;
+        
+        // Searching for node to delete
+        do {
+            if (current->m_data == data) {
+                if (prev != nullptr) {
+                    prev->m_pNext = current->m_pNext;
+                    if (current == m_pRoot) {
+                        m_pRoot = prev->m_pNext;
+                    }
+                } else {
+                    // Deleting root node
+                    if (m_pRoot->m_pNext == m_pRoot) {
+                        delete m_pRoot;
+                        m_pRoot = nullptr;
+                        return;
+                    }
+                    NODE<T>* temp = m_pRoot;
+                    while (temp->m_pNext != m_pRoot) {
+                        temp = temp->m_pNext;
+                    }
+                    temp->m_pNext = m_pRoot->m_pNext;
+                    m_pRoot = m_pRoot->m_pNext;
+                }
+                delete current;
+                return;
+            }
+            prev = current;
+            current = current->m_pNext;
+        } while (current != m_pRoot);
     }
 };
 
-int main()
-{
-    CDoublyLinkedList<int> list;
-
-    list.InsertAtEnd(10);
-    list.InsertAtEnd(20);
-    list.InsertAtEnd(30);
-    list.InsertAtEnd(5);
-
+int main() {
+    CLinkedList<int> list;
+    
+    list.Insert(10);
+    list.Insert(20);
+    list.Insert(30);
+    list.Insert(40);
     list.Print();
-
-    cout << "Eliminando 20 de la lista." << endl;
+    
+    cout << "Inserting at head: 5" << endl;
+    list.InsertAtHead(5);
+    list.Print();
+    
+    cout << "Deleting 20 from the list." << endl;
     list.Delete(20);
     list.Print();
-
+    
     return 0;
 }
