@@ -1,0 +1,189 @@
+#include <iostream>
+using namespace std;
+
+// Definición de la clase CVector
+class CVector 
+{
+private:
+    int* m_pVect; // Puntero al arreglo
+    int m_nCount; // Número de elementos en uso
+    int m_nMax;   // Capacidad máxima del arreglo
+    int m_nDelta; // Incremento para redimensionar
+
+    // Función para inicializar las variables
+    void Init(int delta) 
+    {
+        m_nCount = 0;
+        m_nMax = delta;
+        m_nDelta = delta;
+        m_pVect = new int[m_nMax]; // Crear el arreglo dinámico
+    }
+
+    // Función para redimensionar el arreglo si se sobrepasa la capacidad
+    void Resize() 
+    {
+        m_nMax += m_nDelta;
+        int* temp = new int[m_nMax];
+        for (int i = 0; i < m_nCount; i++) 
+        {
+            temp[i] = m_pVect[i];
+        }
+        delete[] m_pVect;
+        m_pVect = temp;
+    }
+
+    // Función auxiliar para Quick Sort
+    int Partition(int low, int high) 
+    {
+        int pivot = m_pVect[high]; // Elegimos el último elemento como pivote
+        int i = low - 1;
+
+        for (int j = low; j < high; j++) 
+        {
+            if (m_pVect[j] < pivot) 
+            {
+                i++;
+                swap(m_pVect[i], m_pVect[j]);
+            }
+        }
+        swap(m_pVect[i + 1], m_pVect[high]);
+        return i + 1;
+    }
+
+public:
+    // Constructor
+    CVector(int delta = 10) 
+    {
+        Init(delta);
+    }
+
+    // Método para insertar un elemento al final del vector
+    void Insert(int elem) 
+    {
+        if (m_nCount == m_nMax) 
+        {
+            Resize();
+        }
+        m_pVect[m_nCount++] = elem;
+    }
+
+    // Método para mostrar los elementos del vector
+    void Display() 
+    {
+        for (int i = 0; i < m_nCount; i++) 
+        {
+            cout << m_pVect[i] << " ";
+        }
+        cout << endl;
+    }
+
+    // Bubble Sort
+    void BubbleSort() 
+    {
+        bool swapped;
+        for (int i = 0; i < m_nCount - 1; i++) 
+        {
+            swapped = false;
+            for (int j = 0; j < m_nCount - i - 1; j++) 
+            {
+                if (m_pVect[j] > m_pVect[j + 1]) 
+                {
+                    swap(m_pVect[j], m_pVect[j + 1]);
+                    swapped = true;
+                }
+            }
+            if (!swapped) break;
+        }
+    }
+
+    // Selection Sort
+    void SelectionSort() 
+    {
+        for (int i = 0; i < m_nCount - 1; i++) 
+        {
+            int minIndex = i;
+            for (int j = i + 1; j < m_nCount; j++) 
+            {
+                if (m_pVect[j] < m_pVect[minIndex]) 
+                {
+                    minIndex = j;
+                }
+            }
+            if (minIndex != i) 
+            {
+                swap(m_pVect[i], m_pVect[minIndex]);
+            }
+        }
+    }
+
+    // Quick Sort
+    void QuickSort(int low, int high) 
+    {
+        if (low < high) 
+        {
+            int pi = Partition(low, high); // Índice de partición
+
+            QuickSort(low, pi - 1);  // Ordenar izquierda
+            QuickSort(pi + 1, high); // Ordenar derecha
+        }
+    }
+
+    // Insertion Sort
+    void InsertionSort() 
+    {
+        for (int i = 1; i < m_nCount; i++) 
+        {
+            int key = m_pVect[i];
+            int j = i - 1;
+
+            // Mover los elementos que son mayores que key
+            while (j >= 0 && m_pVect[j] > key) 
+            {
+                m_pVect[j + 1] = m_pVect[j];
+                j--;
+            }
+            m_pVect[j + 1] = key;
+        }
+    }
+
+    // Getter para obtener la cantidad de elementos
+    int GetCount() const 
+    {
+        return m_nCount;
+    }
+
+    // Destructor para liberar la memoria
+    ~CVector() 
+    {
+        delete[] m_pVect;
+    }
+};
+
+// Función principal
+int main() 
+{
+    CVector gVect;
+
+    // Insertar algunos elementos
+    gVect.Insert(10);
+    gVect.Insert(20);
+    gVect.Insert(30);
+    gVect.Insert(5);
+    gVect.Insert(50);
+    gVect.Insert(15);
+
+    cout << "Antes de ordenar: ";
+    gVect.Display();
+
+    // Se puede llamar al algoritmo que se prefiera:
+    
+    // gVect.BubbleSort();      // Bubble Sort
+    // gVect.SelectionSort();   // Selection Sort
+    // gVect.InsertionSort();   // Insertion Sort
+    gVect.QuickSort(0, gVect.GetCount() - 1); // Quick Sort
+
+    cout << "Después de ordenar: ";
+    gVect.Display();
+
+    return 0;
+}
